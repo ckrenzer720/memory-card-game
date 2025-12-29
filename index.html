@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A fun memory card matching game. Find all matching pairs by clicking on cards. Test your memory skills!"
+    />
+    <meta
+      name="keywords"
+      content="memory game, card game, matching game, puzzle"
+    />
+    <meta name="author" content="" />
+    <title>Memory Card Game</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="game-container">
+      <header>
+        <h1>Memory Card Game</h1>
+      </header>
+
+      <div class="game-info">
+        <div class="moves-counter">
+          <span class="label">Moves:</span>
+          <span class="value" id="moves">0</span>
+        </div>
+        <button class="reset-btn" id="resetBtn">Reset Game</button>
+      </div>
+
+      <div class="card-grid" id="cardGrid">
+        <!-- Cards will be generated dynamically by JavaScript -->
+      </div>
+
+      <div class="win-message" id="winMessage" style="display: none">
+        <h2>Congratulations! 🎉</h2>
+        <p>You found all the pairs!</p>
+        <p>Total moves: <span id="finalMoves">0</span></p>
+        <button class="reset-btn" id="playAgainBtn">Play Again</button>
+      </div>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>
