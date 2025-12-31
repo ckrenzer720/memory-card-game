@@ -59,12 +59,13 @@ export async function handleCardClick(cardElement, onMatch, onWin) {
     await delay(500); // Brief delay to show both cards
 
     const [card1, card2] = flippedCards;
-    const card1Id = card1.dataset.cardId;
-    const card2Id = card2.dataset.cardId;
+    const card1Id = parseInt(card1.dataset.cardId);
+    const card2Id = parseInt(card2.dataset.cardId);
 
     // Check if cards match (same symbol = same id range)
-    const card1SymbolIndex = Math.floor(parseInt(card1Id) / 2);
-    const card2SymbolIndex = Math.floor(parseInt(card2Id) / 2);
+    // Cards with IDs 0,1 match (symbol 0), 2,3 match (symbol 1), etc.
+    const card1SymbolIndex = Math.floor(card1Id / 2);
+    const card2SymbolIndex = Math.floor(card2Id / 2);
 
     if (card1SymbolIndex === card2SymbolIndex) {
       // Match found!
@@ -120,4 +121,5 @@ export function getMoves() {
 export function isGameComplete() {
   return matchedPairs === TOTAL_PAIRS;
 }
+
 

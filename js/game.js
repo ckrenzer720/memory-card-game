@@ -75,22 +75,28 @@ export function resetGame() {
   initGame();
 }
 
+/**
+ * Initialize event listeners for reset buttons
+ * Uses event delegation to avoid duplicate listeners
+ */
+function setupEventListeners() {
+  // Use event delegation on document to handle clicks
+  document.addEventListener('click', (e) => {
+    if (e.target.id === 'resetBtn' || e.target.id === 'playAgainBtn') {
+      resetGame();
+    }
+  });
+}
+
 // Initialize game when DOM is loaded
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initGame);
+  document.addEventListener('DOMContentLoaded', () => {
+    setupEventListeners();
+    initGame();
+  });
 } else {
+  setupEventListeners();
   initGame();
 }
 
-// Set up reset button
-const resetBtn = document.getElementById('resetBtn');
-const playAgainBtn = document.getElementById('playAgainBtn');
-
-if (resetBtn) {
-  resetBtn.addEventListener('click', resetGame);
-}
-
-if (playAgainBtn) {
-  playAgainBtn.addEventListener('click', resetGame);
-}
 
