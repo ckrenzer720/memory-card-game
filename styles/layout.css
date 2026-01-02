@@ -43,6 +43,10 @@ header h1 {
   margin-top: 2rem;
 }
 
+.win-message.hidden {
+  display: none;
+}
+
 .win-message h2 {
   color: #667eea;
   margin-bottom: 1rem;
@@ -70,5 +74,6 @@ header h1 {
     max-width: 100%;
   }
 }
+
 
 

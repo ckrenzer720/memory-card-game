@@ -27,24 +27,24 @@
       </header>
 
       <!-- Game Info Section - Moves counter and reset button -->
-      <div class="game-info">
-        <div class="moves-counter">
+      <div class="game-info" role="region" aria-label="Game information">
+        <div class="moves-counter" aria-live="polite">
           <span class="label">Moves:</span>
-          <span class="value" id="moves">0</span>
+          <span class="value" id="moves" aria-label="Number of moves">0</span>
         </div>
-        <button class="reset-btn" id="resetBtn">Reset Game</button>
+        <button class="reset-btn" id="resetBtn" aria-label="Reset the game">Reset Game</button>
       </div>
 
       <!-- Card Grid Container - 4x4 grid for 16 cards (will be populated by JavaScript) -->
-      <div class="card-grid" id="cardGrid">
+      <div class="card-grid" id="cardGrid" role="grid" aria-label="Memory card game grid">
         <!-- Cards will be generated dynamically by JavaScript -->
       </div>
 
-      <div class="win-message" id="winMessage" style="display: none">
-        <h2>Congratulations! 🎉</h2>
+      <div class="win-message hidden" id="winMessage" role="dialog" aria-labelledby="win-title" aria-hidden="true">
+        <h2 id="win-title">Congratulations! 🎉</h2>
         <p>You found all the pairs!</p>
-        <p>Total moves: <span id="finalMoves">0</span></p>
-        <button class="reset-btn" id="playAgainBtn">Play Again</button>
+        <p>Total moves: <span id="finalMoves" aria-label="Final move count">0</span></p>
+        <button class="reset-btn" id="playAgainBtn" aria-label="Play the game again">Play Again</button>
       </div>
     </div>
 

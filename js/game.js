@@ -39,7 +39,8 @@ export function initGame() {
   // Hide win message
   const winMessage = document.getElementById('winMessage');
   if (winMessage) {
-    winMessage.style.display = 'none';
+    winMessage.classList.add('hidden');
+    winMessage.setAttribute('aria-hidden', 'true');
   }
 }
 
@@ -62,7 +63,8 @@ function onGameWin() {
 
   if (winMessage && finalMoves) {
     finalMoves.textContent = getMoves();
-    winMessage.style.display = 'block';
+    winMessage.classList.remove('hidden');
+    winMessage.setAttribute('aria-hidden', 'false');
   }
 
   console.log('Congratulations! You won!');
