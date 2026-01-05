@@ -49,6 +49,16 @@
     </div>
 
     <!-- Modular JavaScript - ES6 modules -->
+    <!-- Unregister any existing service workers -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(function(registrations) {
+          for(let registration of registrations) {
+            registration.unregister();
+          }
+        });
+      }
+    </script>
     <script type="module" src="js/game.js"></script>
   </body>
 </html>
