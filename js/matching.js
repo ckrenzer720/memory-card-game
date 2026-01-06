@@ -15,13 +15,38 @@ const TOTAL_PAIRS = 8;
 
 /**
  * Initialize game state
+ * Resets all game variables to their initial values
+ * Called at the start of a new game or when resetting
+ * 
+ * State variables reset:
+ * - flippedCards: Array of currently flipped cards (max 2)
+ * - matchedPairs: Number of successfully matched pairs (0-8)
+ * - moves: Number of moves/attempts made (starts at 0)
+ * - isProcessing: Flag to prevent actions during card matching logic
+ * 
+ * @returns {void}
+ * 
+ * @example
+ * initGameState(); // Reset everything for a new game
  */
 export function initGameState() {
+  // Reset flipped cards array (no cards are flipped initially)
   flippedCards = [];
+  
+  // Reset matched pairs counter (no pairs matched yet)
   matchedPairs = 0;
+  
+  // Reset moves counter (no moves made yet)
   moves = 0;
+  
+  // Reset processing flag (game is ready for input)
   isProcessing = false;
+  
+  // Update the moves display in the UI
   updateMovesDisplay();
+  
+  // Log for debugging (can be removed in production)
+  console.log('Game state initialized');
 }
 
 /**
