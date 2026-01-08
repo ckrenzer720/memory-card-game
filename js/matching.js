@@ -57,11 +57,12 @@ export function initGameState() {
  */
 export async function handleCardClick(cardElement, onMatch, onWin) {
   // Prevent actions during processing or if card is already matched/flipped
+  // This protects against rapid clicking and edge cases
   if (
-    isProcessing ||
-    cardElement.classList.contains('matched') ||
-    cardElement.classList.contains('flipped') ||
-    flippedCards.includes(cardElement)
+    isProcessing || // Prevents clicks during matching check
+    cardElement.classList.contains('matched') || // Prevents clicking matched cards
+    cardElement.classList.contains('flipped') || // Prevents clicking same card twice
+    flippedCards.includes(cardElement) // Additional check for flipped cards
   ) {
     return;
   }
@@ -104,10 +105,20 @@ export async function handleCardClick(cardElement, onMatch, onWin) {
         onWin && onWin();
       }
     } else {
-      // No match - flip back
+      // No match - add shake animation
+      card1.classList.add('mismatch');
+      card2.classList.add('mismatch');
+      
+      // Flip back after delay
       await delay(1000);
       unflipCard(card1);
       unflipCard(card2);
+      
+      // Remove mismatch class after animation
+      setTimeout(() => {
+        card1.classList.remove('mismatch');
+        card2.classList.remove('mismatch');
+      }, 500);
     }
 
     // Reset flipped cards and re-enable

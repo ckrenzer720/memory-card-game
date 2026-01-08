@@ -35,8 +35,14 @@
         <button class="reset-btn" id="resetBtn" aria-label="Reset the game">Reset Game</button>
       </div>
 
+      <!-- Loading State -->
+      <div class="loading-state" id="loadingState" role="status" aria-live="polite" aria-label="Loading game">
+        <div class="loading-spinner"></div>
+        <p>Setting up your game...</p>
+      </div>
+
       <!-- Card Grid Container - 4x4 grid for 16 cards (will be populated by JavaScript) -->
-      <div class="card-grid" id="cardGrid" role="grid" aria-label="Memory card game grid">
+      <div class="card-grid hidden" id="cardGrid" role="grid" aria-label="Memory card game grid">
         <!-- Cards will be generated dynamically by JavaScript -->
       </div>
 

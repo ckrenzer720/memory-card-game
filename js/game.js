@@ -12,15 +12,27 @@ let cardElements = [];
 /**
  * Initialize the game
  */
-export function initGame() {
+export async function initGame() {
   const cardGrid = document.getElementById('cardGrid');
+  const loadingState = document.getElementById('loadingState');
+  
   if (!cardGrid) {
     console.error('Card grid not found!');
     return;
   }
 
+  // Show loading state
+  if (loadingState) {
+    loadingState.classList.remove('hidden');
+    loadingState.setAttribute('aria-hidden', 'false');
+  }
+  cardGrid.classList.add('hidden');
+
   // Reset game state
   initGameState();
+
+  // Simulate brief loading delay for better UX (optional - can be removed)
+  await new Promise(resolve => setTimeout(resolve, 300));
 
   // Create and shuffle cards
   cards = createCardArray();
@@ -28,11 +40,27 @@ export function initGame() {
   // Render cards to grid
   renderCards(cards, cardGrid);
 
+  // Hide loading state and show grid
+  if (loadingState) {
+    loadingState.classList.add('hidden');
+    loadingState.setAttribute('aria-hidden', 'true');
+  }
+  cardGrid.classList.remove('hidden');
+
   // Get card elements and add click listeners
   cardElements = Array.from(document.querySelectorAll('.card'));
   cardElements.forEach((cardElement) => {
+    // Click event
     cardElement.addEventListener('click', () => {
       handleCardClick(cardElement, onCardMatch, onGameWin);
+    });
+    
+    // Keyboard navigation (Enter and Space keys)
+    cardElement.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        handleCardClick(cardElement, onCardMatch, onGameWin);
+      }
     });
   });
 
