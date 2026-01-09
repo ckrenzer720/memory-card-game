@@ -20,7 +20,9 @@
 export function shuffleArray(array) {
   // Validate input
   if (!Array.isArray(array)) {
-    console.error('shuffleArray: Input must be an array');
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('shuffleArray: Input must be an array');
+    }
     return [];
   }
 

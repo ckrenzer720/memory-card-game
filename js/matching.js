@@ -13,6 +13,10 @@ let isProcessing = false;
 
 const TOTAL_PAIRS = 8;
 
+// Cache DOM elements
+let movesElement = null;
+let allCards = null;
+
 /**
  * Initialize game state
  * Resets all game variables to their initial values
@@ -42,11 +46,11 @@ export function initGameState() {
   // Reset processing flag (game is ready for input)
   isProcessing = false;
   
+  // Clear cached DOM references
+  allCards = null;
+  
   // Update the moves display in the UI
   updateMovesDisplay();
-  
-  // Log for debugging (can be removed in production)
-  console.log('Game state initialized');
 }
 
 /**
@@ -77,8 +81,11 @@ export async function handleCardClick(cardElement, onMatch, onWin) {
     moves++;
     updateMovesDisplay();
 
-    // Disable all cards during check
-    document.querySelectorAll('.card').forEach((card) => {
+    // Disable all cards during check (cache query result)
+    if (!allCards) {
+      allCards = document.querySelectorAll('.card');
+    }
+    allCards.forEach((card) => {
       disableCard(card);
     });
 
@@ -125,10 +132,18 @@ export async function handleCardClick(cardElement, onMatch, onWin) {
     flippedCards = [];
     isProcessing = false;
 
-    // Re-enable all non-matched cards
-    document.querySelectorAll('.card:not(.matched)').forEach((card) => {
-      enableCard(card);
-    });
+    // Re-enable all non-matched cards (use cached reference if available)
+    if (allCards) {
+      allCards.forEach((card) => {
+        if (!card.classList.contains('matched')) {
+          enableCard(card);
+        }
+      });
+    } else {
+      document.querySelectorAll('.card:not(.matched)').forEach((card) => {
+        enableCard(card);
+      });
+    }
   }
 }
 
@@ -136,7 +151,10 @@ export async function handleCardClick(cardElement, onMatch, onWin) {
  * Update moves counter display
  */
 function updateMovesDisplay() {
-  const movesElement = document.getElementById('moves');
+  // Cache the element on first access
+  if (!movesElement) {
+    movesElement = document.getElementById('moves');
+  }
   if (movesElement) {
     movesElement.textContent = moves;
   }

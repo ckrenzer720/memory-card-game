@@ -47,7 +47,9 @@ export function createCardArray() {
   
   // Validate we have the correct number of cards
   if (cards.length !== 16) {
-    console.error(`Expected 16 cards, but got ${cards.length}`);
+    if (process.env.NODE_ENV !== 'production') {
+      console.error(`Expected 16 cards, but got ${cards.length}`);
+    }
   }
   
   // Shuffle the array randomly and return
@@ -70,7 +72,9 @@ export function createCardArray() {
 export function createCardElement(card, index) {
   // Validate input
   if (!card || typeof card.id !== 'number' || !card.symbol) {
-    console.error('Invalid card object provided to createCardElement');
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Invalid card object provided to createCardElement');
+    }
     return null;
   }
 
@@ -123,35 +127,42 @@ export function createCardElement(card, index) {
 export function renderCards(cards, gridContainer) {
   // Validate inputs
   if (!Array.isArray(cards)) {
-    console.error('renderCards: cards must be an array');
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('renderCards: cards must be an array');
+    }
     return;
   }
   
   if (!gridContainer || !(gridContainer instanceof HTMLElement)) {
-    console.error('renderCards: gridContainer must be a valid DOM element');
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('renderCards: gridContainer must be a valid DOM element');
+    }
     return;
   }
 
   // Validate card count
-  if (cards.length !== 16) {
+  if (cards.length !== 16 && process.env.NODE_ENV !== 'production') {
     console.warn(`Expected 16 cards, but got ${cards.length}`);
   }
 
   // Clear existing cards from the grid
   gridContainer.innerHTML = '';
 
-  // Generate and append each card element
+  // Use DocumentFragment for better performance (batch DOM operations)
+  const fragment = document.createDocumentFragment();
+
+  // Generate all card elements and append to fragment
   cards.forEach((card, index) => {
     const cardElement = createCardElement(card, index);
     if (cardElement) {
-      gridContainer.appendChild(cardElement);
-    } else {
+      fragment.appendChild(cardElement);
+    } else if (process.env.NODE_ENV !== 'production') {
       console.error(`Failed to create card element at index ${index}`);
     }
   });
 
-  // Log for debugging (can be removed in production)
-  console.log(`Rendered ${cards.length} cards to the grid`);
+  // Append all cards at once (single reflow)
+  gridContainer.appendChild(fragment);
 }
 
 /**

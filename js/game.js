@@ -6,18 +6,32 @@
 import { createCardArray, renderCards } from './cards.js';
 import { initGameState, handleCardClick, getMoves, isGameComplete } from './matching.js';
 
-let cards = [];
-let cardElements = [];
+// Cache DOM elements
+let cardGrid = null;
+let loadingState = null;
+let winMessage = null;
+let finalMoves = null;
+let movesElement = null;
+
+// Track if event listeners are already set up
+let eventListenersSetup = false;
 
 /**
  * Initialize the game
  */
 export async function initGame() {
-  const cardGrid = document.getElementById('cardGrid');
-  const loadingState = document.getElementById('loadingState');
+  // Cache DOM elements on first call
+  if (!cardGrid) {
+    cardGrid = document.getElementById('cardGrid');
+    loadingState = document.getElementById('loadingState');
+    winMessage = document.getElementById('winMessage');
+    finalMoves = document.getElementById('finalMoves');
+  }
   
   if (!cardGrid) {
-    console.error('Card grid not found!');
+    if (process.env.NODE_ENV !== 'production') {
+      console.error('Card grid not found!');
+    }
     return;
   }
 
@@ -35,7 +49,7 @@ export async function initGame() {
   await new Promise(resolve => setTimeout(resolve, 300));
 
   // Create and shuffle cards
-  cards = createCardArray();
+  const cards = createCardArray();
 
   // Render cards to grid
   renderCards(cards, cardGrid);
@@ -47,25 +61,7 @@ export async function initGame() {
   }
   cardGrid.classList.remove('hidden');
 
-  // Get card elements and add click listeners
-  cardElements = Array.from(document.querySelectorAll('.card'));
-  cardElements.forEach((cardElement) => {
-    // Click event
-    cardElement.addEventListener('click', () => {
-      handleCardClick(cardElement, onCardMatch, onGameWin);
-    });
-    
-    // Keyboard navigation (Enter and Space keys)
-    cardElement.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        handleCardClick(cardElement, onCardMatch, onGameWin);
-      }
-    });
-  });
-
   // Hide win message
-  const winMessage = document.getElementById('winMessage');
   if (winMessage) {
     winMessage.classList.add('hidden');
     winMessage.setAttribute('aria-hidden', 'true');
@@ -79,23 +75,18 @@ export async function initGame() {
  */
 function onCardMatch(card1, card2) {
   // Optional: Add match sound or animation here
-  console.log('Match found!');
+  // Match animation is handled by CSS
 }
 
 /**
  * Callback when game is won
  */
 function onGameWin() {
-  const winMessage = document.getElementById('winMessage');
-  const finalMoves = document.getElementById('finalMoves');
-
   if (winMessage && finalMoves) {
     finalMoves.textContent = getMoves();
     winMessage.classList.remove('hidden');
     winMessage.setAttribute('aria-hidden', 'false');
   }
-
-  console.log('Congratulations! You won!');
 }
 
 /**
@@ -106,25 +97,66 @@ export function resetGame() {
 }
 
 /**
- * Initialize event listeners for reset buttons
- * Uses event delegation to avoid duplicate listeners
+ * Initialize event listeners
+ * Uses event delegation for better performance
+ * Only sets up once to avoid duplicate listeners
  */
 function setupEventListeners() {
-  // Use event delegation on document to handle clicks
+  if (eventListenersSetup) {
+    return; // Already set up
+  }
+
+  // Event delegation for reset buttons
   document.addEventListener('click', (e) => {
     if (e.target.id === 'resetBtn' || e.target.id === 'playAgainBtn') {
       resetGame();
     }
   });
+
+  // Event delegation for card clicks and keyboard navigation
+  // This is more efficient than attaching listeners to each card
+  // Will work for all cards, even when re-rendered
+  if (cardGrid) {
+    cardGrid.addEventListener('click', (e) => {
+      const cardElement = e.target.closest('.card');
+      if (cardElement) {
+        handleCardClick(cardElement, onCardMatch, onGameWin);
+      }
+    });
+
+    cardGrid.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        const cardElement = e.target.closest('.card');
+        if (cardElement) {
+          e.preventDefault();
+          handleCardClick(cardElement, onCardMatch, onGameWin);
+        }
+      }
+    });
+  }
+
+  eventListenersSetup = true;
 }
 
 // Initialize game when DOM is loaded
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {
+    // Cache DOM elements first
+    cardGrid = document.getElementById('cardGrid');
+    loadingState = document.getElementById('loadingState');
+    winMessage = document.getElementById('winMessage');
+    finalMoves = document.getElementById('finalMoves');
+    
     setupEventListeners();
     initGame();
   });
 } else {
+  // Cache DOM elements first
+  cardGrid = document.getElementById('cardGrid');
+  loadingState = document.getElementById('loadingState');
+  winMessage = document.getElementById('winMessage');
+  finalMoves = document.getElementById('finalMoves');
+  
   setupEventListeners();
   initGame();
 }
