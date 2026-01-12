@@ -5,6 +5,7 @@
 
 import { createCardArray, renderCards } from './cards.js';
 import { initGameState, handleCardClick, getMoves, isGameComplete } from './matching.js';
+import { playWinSound, playFlipSound, isAudioEnabled } from './sounds.js';
 
 // Cache DOM elements
 let cardGrid = null;
@@ -66,6 +67,15 @@ export async function initGame() {
     winMessage.classList.add('hidden');
     winMessage.setAttribute('aria-hidden', 'true');
   }
+  
+  // Focus on first card for keyboard navigation
+  const firstCard = cardGrid?.querySelector('.card');
+  if (firstCard) {
+    // Use setTimeout to ensure card is fully rendered
+    setTimeout(() => {
+      firstCard.focus();
+    }, 100);
+  }
 }
 
 /**
@@ -74,8 +84,8 @@ export async function initGame() {
  * @param {HTMLElement} card2 - Second matched card
  */
 function onCardMatch(card1, card2) {
-  // Optional: Add match sound or animation here
   // Match animation is handled by CSS
+  // Match sound is handled in matching.js
 }
 
 /**
@@ -86,7 +96,38 @@ function onGameWin() {
     finalMoves.textContent = getMoves();
     winMessage.classList.remove('hidden');
     winMessage.setAttribute('aria-hidden', 'false');
+    
+    // Play win sound if audio is enabled
+    if (isAudioEnabled()) {
+      playWinSound();
+    }
+    
+    // Focus on win message for accessibility
+    winMessage.focus();
+    
+    // Announce win to screen readers
+    const announcement = `Congratulations! You won the game in ${getMoves()} moves!`;
+    announceToScreenReader(announcement);
   }
+}
+
+/**
+ * Announce message to screen readers
+ * @param {string} message - Message to announce
+ */
+function announceToScreenReader(message) {
+  const announcement = document.createElement('div');
+  announcement.setAttribute('role', 'status');
+  announcement.setAttribute('aria-live', 'polite');
+  announcement.setAttribute('aria-atomic', 'true');
+  announcement.className = 'sr-only';
+  announcement.textContent = message;
+  document.body.appendChild(announcement);
+  
+  // Remove after announcement
+  setTimeout(() => {
+    document.body.removeChild(announcement);
+  }, 1000);
 }
 
 /**

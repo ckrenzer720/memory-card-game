@@ -5,6 +5,7 @@
 
 import { delay } from './utils.js';
 import { unflipCard, markCardAsMatched, disableCard, enableCard } from './cards.js';
+import { playMatchSound, playMismatchSound, playFlipSound, isAudioEnabled } from './sounds.js';
 
 let flippedCards = [];
 let matchedPairs = 0;
@@ -16,6 +17,27 @@ const TOTAL_PAIRS = 8;
 // Cache DOM elements
 let movesElement = null;
 let allCards = null;
+
+/**
+ * Announce message to screen readers
+ * @param {string} message - Message to announce
+ */
+function announceToScreenReader(message) {
+  const announcement = document.createElement('div');
+  announcement.setAttribute('role', 'status');
+  announcement.setAttribute('aria-live', 'polite');
+  announcement.setAttribute('aria-atomic', 'true');
+  announcement.className = 'sr-only';
+  announcement.textContent = message;
+  document.body.appendChild(announcement);
+  
+  // Remove after announcement
+  setTimeout(() => {
+    if (document.body.contains(announcement)) {
+      document.body.removeChild(announcement);
+    }
+  }, 1000);
+}
 
 /**
  * Initialize game state
@@ -74,6 +96,11 @@ export async function handleCardClick(cardElement, onMatch, onWin) {
   // Add to flipped cards
   flippedCards.push(cardElement);
   cardElement.classList.add('flipped');
+  
+  // Play flip sound if audio is enabled
+  if (isAudioEnabled()) {
+    playFlipSound();
+  }
 
   // If two cards are flipped, check for match
   if (flippedCards.length === 2) {
@@ -106,6 +133,14 @@ export async function handleCardClick(cardElement, onMatch, onWin) {
       markCardAsMatched(card2);
       matchedPairs++;
       onMatch && onMatch(card1, card2);
+      
+      // Play match sound if audio is enabled
+      if (isAudioEnabled()) {
+        playMatchSound();
+      }
+      
+      // Announce match to screen readers
+      announceToScreenReader(`Match found! ${matchedPairs} of ${TOTAL_PAIRS} pairs matched.`);
 
       // Check for win
       if (matchedPairs === TOTAL_PAIRS) {
@@ -115,6 +150,11 @@ export async function handleCardClick(cardElement, onMatch, onWin) {
       // No match - add shake animation
       card1.classList.add('mismatch');
       card2.classList.add('mismatch');
+      
+      // Play mismatch sound if audio is enabled
+      if (isAudioEnabled()) {
+        playMismatchSound();
+      }
       
       // Flip back after delay
       await delay(1000);
