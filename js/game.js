@@ -3,16 +3,16 @@
  * Initializes and manages the game
  */
 
-import { createCardArray, renderCards } from './cards.js';
-import { initGameState, handleCardClick, getMoves, isGameComplete } from './matching.js';
-import { playWinSound, playFlipSound, isAudioEnabled } from './sounds.js';
+import { createCardArray, renderCards } from "./cards.js";
+import { initGameState, handleCardClick, getMoves } from "./matching.js";
+import { playWinSound, isAudioEnabled } from "./sounds.js";
+import { announceToScreenReader } from "./utils.js";
 
 // Cache DOM elements
 let cardGrid = null;
 let loadingState = null;
 let winMessage = null;
 let finalMoves = null;
-let movesElement = null;
 
 // Track if event listeners are already set up
 let eventListenersSetup = false;
@@ -21,33 +21,28 @@ let eventListenersSetup = false;
  * Initialize the game
  */
 export async function initGame() {
-  // Cache DOM elements on first call
+  // Ensure DOM elements are cached
+  cacheDOMElements();
+
   if (!cardGrid) {
-    cardGrid = document.getElementById('cardGrid');
-    loadingState = document.getElementById('loadingState');
-    winMessage = document.getElementById('winMessage');
-    finalMoves = document.getElementById('finalMoves');
-  }
-  
-  if (!cardGrid) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.error('Card grid not found!');
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Card grid not found!");
     }
     return;
   }
 
   // Show loading state
   if (loadingState) {
-    loadingState.classList.remove('hidden');
-    loadingState.setAttribute('aria-hidden', 'false');
+    loadingState.classList.remove("hidden");
+    loadingState.setAttribute("aria-hidden", "false");
   }
-  cardGrid.classList.add('hidden');
+  cardGrid.classList.add("hidden");
 
   // Reset game state
   initGameState();
 
   // Simulate brief loading delay for better UX (optional - can be removed)
-  await new Promise(resolve => setTimeout(resolve, 300));
+  await new Promise((resolve) => setTimeout(resolve, 300));
 
   // Create and shuffle cards
   const cards = createCardArray();
@@ -57,19 +52,19 @@ export async function initGame() {
 
   // Hide loading state and show grid
   if (loadingState) {
-    loadingState.classList.add('hidden');
-    loadingState.setAttribute('aria-hidden', 'true');
+    loadingState.classList.add("hidden");
+    loadingState.setAttribute("aria-hidden", "true");
   }
-  cardGrid.classList.remove('hidden');
+  cardGrid.classList.remove("hidden");
 
   // Hide win message
   if (winMessage) {
-    winMessage.classList.add('hidden');
-    winMessage.setAttribute('aria-hidden', 'true');
+    winMessage.classList.add("hidden");
+    winMessage.setAttribute("aria-hidden", "true");
   }
-  
+
   // Focus on first card for keyboard navigation
-  const firstCard = cardGrid?.querySelector('.card');
+  const firstCard = cardGrid?.querySelector(".card");
   if (firstCard) {
     // Use setTimeout to ensure card is fully rendered
     setTimeout(() => {
@@ -83,9 +78,10 @@ export async function initGame() {
  * @param {HTMLElement} card1 - First matched card
  * @param {HTMLElement} card2 - Second matched card
  */
-function onCardMatch(card1, card2) {
+function onCardMatch() {
   // Match animation is handled by CSS
   // Match sound is handled in matching.js
+  // This callback is kept for potential future enhancements
 }
 
 /**
@@ -94,40 +90,21 @@ function onCardMatch(card1, card2) {
 function onGameWin() {
   if (winMessage && finalMoves) {
     finalMoves.textContent = getMoves();
-    winMessage.classList.remove('hidden');
-    winMessage.setAttribute('aria-hidden', 'false');
-    
+    winMessage.classList.remove("hidden");
+    winMessage.setAttribute("aria-hidden", "false");
+
     // Play win sound if audio is enabled
     if (isAudioEnabled()) {
       playWinSound();
     }
-    
+
     // Focus on win message for accessibility
     winMessage.focus();
-    
+
     // Announce win to screen readers
     const announcement = `Congratulations! You won the game in ${getMoves()} moves!`;
     announceToScreenReader(announcement);
   }
-}
-
-/**
- * Announce message to screen readers
- * @param {string} message - Message to announce
- */
-function announceToScreenReader(message) {
-  const announcement = document.createElement('div');
-  announcement.setAttribute('role', 'status');
-  announcement.setAttribute('aria-live', 'polite');
-  announcement.setAttribute('aria-atomic', 'true');
-  announcement.className = 'sr-only';
-  announcement.textContent = message;
-  document.body.appendChild(announcement);
-  
-  // Remove after announcement
-  setTimeout(() => {
-    document.body.removeChild(announcement);
-  }, 1000);
 }
 
 /**
@@ -148,8 +125,8 @@ function setupEventListeners() {
   }
 
   // Event delegation for reset buttons
-  document.addEventListener('click', (e) => {
-    if (e.target.id === 'resetBtn' || e.target.id === 'playAgainBtn') {
+  document.addEventListener("click", (e) => {
+    if (e.target.id === "resetBtn" || e.target.id === "playAgainBtn") {
       resetGame();
     }
   });
@@ -158,16 +135,16 @@ function setupEventListeners() {
   // This is more efficient than attaching listeners to each card
   // Will work for all cards, even when re-rendered
   if (cardGrid) {
-    cardGrid.addEventListener('click', (e) => {
-      const cardElement = e.target.closest('.card');
+    cardGrid.addEventListener("click", (e) => {
+      const cardElement = e.target.closest(".card");
       if (cardElement) {
         handleCardClick(cardElement, onCardMatch, onGameWin);
       }
     });
 
-    cardGrid.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        const cardElement = e.target.closest('.card');
+    cardGrid.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        const cardElement = e.target.closest(".card");
         if (cardElement) {
           e.preventDefault();
           handleCardClick(cardElement, onCardMatch, onGameWin);
@@ -179,27 +156,28 @@ function setupEventListeners() {
   eventListenersSetup = true;
 }
 
+/**
+ * Initialize DOM element cache
+ * Called once at startup
+ */
+function cacheDOMElements() {
+  if (!cardGrid) {
+    cardGrid = document.getElementById("cardGrid");
+    loadingState = document.getElementById("loadingState");
+    winMessage = document.getElementById("winMessage");
+    finalMoves = document.getElementById("finalMoves");
+  }
+}
+
 // Initialize game when DOM is loaded
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', () => {
-    // Cache DOM elements first
-    cardGrid = document.getElementById('cardGrid');
-    loadingState = document.getElementById('loadingState');
-    winMessage = document.getElementById('winMessage');
-    finalMoves = document.getElementById('finalMoves');
-    
+if (document.readyState === "loading") {
+  document.addEventListener("DOMContentLoaded", () => {
+    cacheDOMElements();
     setupEventListeners();
     initGame();
   });
 } else {
-  // Cache DOM elements first
-  cardGrid = document.getElementById('cardGrid');
-  loadingState = document.getElementById('loadingState');
-  winMessage = document.getElementById('winMessage');
-  finalMoves = document.getElementById('finalMoves');
-  
+  cacheDOMElements();
   setupEventListeners();
   initGame();
 }
-
-

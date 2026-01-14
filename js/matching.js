@@ -3,7 +3,7 @@
  * Handles card matching, game state, and win detection
  */
 
-import { delay } from './utils.js';
+import { delay, announceToScreenReader } from './utils.js';
 import { unflipCard, markCardAsMatched, disableCard, enableCard } from './cards.js';
 import { playMatchSound, playMismatchSound, playFlipSound, isAudioEnabled } from './sounds.js';
 
@@ -17,27 +17,6 @@ const TOTAL_PAIRS = 8;
 // Cache DOM elements
 let movesElement = null;
 let allCards = null;
-
-/**
- * Announce message to screen readers
- * @param {string} message - Message to announce
- */
-function announceToScreenReader(message) {
-  const announcement = document.createElement('div');
-  announcement.setAttribute('role', 'status');
-  announcement.setAttribute('aria-live', 'polite');
-  announcement.setAttribute('aria-atomic', 'true');
-  announcement.className = 'sr-only';
-  announcement.textContent = message;
-  document.body.appendChild(announcement);
-  
-  // Remove after announcement
-  setTimeout(() => {
-    if (document.body.contains(announcement)) {
-      document.body.removeChild(announcement);
-    }
-  }, 1000);
-}
 
 /**
  * Initialize game state
@@ -82,6 +61,11 @@ export function initGameState() {
  * @param {Function} onWin - Callback when game is won
  */
 export async function handleCardClick(cardElement, onMatch, onWin) {
+  // Early return if card is invalid - MUST be first to prevent null reference errors
+  if (!cardElement || !cardElement.dataset?.cardId) {
+    return;
+  }
+
   // Prevent actions during processing or if card is already matched/flipped
   // This protects against rapid clicking and edge cases
   if (
