@@ -1,9 +1,11 @@
 # Memory Card Game - Development Plan
 
 ## Project Overview
+
 Build a memory card matching game with 16 cards (8 pairs) where players click cards to find matching pairs. No time limit - focus on memory skills.
 
 ## Technical Stack
+
 - **HTML5** - Structure and semantic markup
 - **CSS3** - Styling, animations, and responsive design
 - **Vanilla JavaScript** - Game logic, event handling, DOM manipulation
@@ -11,9 +13,11 @@ Build a memory card matching game with 16 cards (8 pairs) where players click ca
 ## Development Phases
 
 ### Phase 1: HTML Structure (`index.html`)
+
 **Goal:** Create the basic page structure
 
 **Tasks:**
+
 - Create HTML5 document with proper meta tags
 - Add game container/wrapper
 - Create card grid container (4x4 grid for 16 cards)
@@ -21,6 +25,7 @@ Build a memory card matching game with 16 cards (8 pairs) where players click ca
 - Link CSS and JavaScript files
 
 **Key Elements:**
+
 - `<div class="game-container">` - Main wrapper
 - `<div class="game-info">` - Score/moves display
 - `<div class="card-grid">` - Grid container for cards
@@ -29,9 +34,11 @@ Build a memory card matching game with 16 cards (8 pairs) where players click ca
 ---
 
 ### Phase 2: CSS Styling (`style.css`)
+
 **Goal:** Create attractive, modern UI with smooth animations
 
 **Tasks:**
+
 - Set up base styles (reset, fonts, colors)
 - Style game container and layout
 - Create card styling (front/back faces)
@@ -43,6 +50,7 @@ Build a memory card matching game with 16 cards (8 pairs) where players click ca
 - Style game info section
 
 **Key Features:**
+
 - Card flip animation (3D transform)
 - Grid layout (4 columns, 4 rows)
 - Color scheme and typography
@@ -53,7 +61,9 @@ Build a memory card matching game with 16 cards (8 pairs) where players click ca
 ### Phase 3: JavaScript Core Logic (`script.js`)
 
 #### 3.1 Game Initialization
+
 **Tasks:**
+
 - Create array of 8 image pairs (16 cards total)
 - Shuffle the cards array randomly
 - Generate card elements dynamically
@@ -61,13 +71,16 @@ Build a memory card matching game with 16 cards (8 pairs) where players click ca
 - Set initial game state
 
 **JavaScript Concepts:**
+
 - Arrays (card data structure)
 - Array methods (shuffle algorithm)
 - DOM manipulation (createElement, appendChild)
 - Loops (for/forEach to create cards)
 
 #### 3.2 Card Interaction
+
 **Tasks:**
+
 - Add click event listeners to all cards
 - Implement card flip on click
 - Track which cards are currently flipped
@@ -75,13 +88,16 @@ Build a memory card matching game with 16 cards (8 pairs) where players click ca
 - Prevent clicking the same card twice
 
 **JavaScript Concepts:**
+
 - Event listeners (addEventListener)
 - Event handling
 - State management (tracking flipped cards)
 - Conditional logic
 
 #### 3.3 Matching Logic
+
 **Tasks:**
+
 - When 2 cards are flipped, compare them
 - If match: keep cards flipped, mark as matched
 - If no match: flip cards back after short delay
@@ -89,31 +105,38 @@ Build a memory card matching game with 16 cards (8 pairs) where players click ca
 - Add visual feedback for matches/mismatches
 
 **JavaScript Concepts:**
+
 - Conditional statements (if/else)
 - setTimeout for delays
 - Array methods (comparison)
 - State tracking
 
 #### 3.4 Game Completion
+
 **Tasks:**
+
 - Detect when all pairs are matched
 - Show win message/celebration
 - Display final move count
 - Offer restart option
 
 **JavaScript Concepts:**
+
 - Array methods (every, filter)
 - Conditional logic
 - DOM manipulation (show/hide elements)
 
 #### 3.5 Reset Functionality
+
 **Tasks:**
+
 - Create reset button functionality
 - Shuffle cards again
 - Reset game state (moves, matched pairs)
 - Reset visual state of all cards
 
 **JavaScript Concepts:**
+
 - Function creation
 - State reset
 - DOM manipulation
@@ -121,7 +144,9 @@ Build a memory card matching game with 16 cards (8 pairs) where players click ca
 ---
 
 ### Phase 4: Polish & Enhancement
+
 **Tasks:**
+
 - Add move counter display
 - Improve animations and transitions
 - Add sound effects (optional)
@@ -133,6 +158,7 @@ Build a memory card matching game with 16 cards (8 pairs) where players click ca
 ---
 
 ## File Structure
+
 ```
 memory-card-game/
 ├── index.html          # Main HTML structure
@@ -144,6 +170,7 @@ memory-card-game/
 ```
 
 ## Implementation Order
+
 1. **HTML** → Create structure first
 2. **CSS** → Style the static layout
 3. **JavaScript** → Add interactivity step by step:
@@ -154,6 +181,7 @@ memory-card-game/
    - Add reset functionality
 
 ## Key JavaScript Concepts to Practice
+
 - ✅ **Arrays** - Store card data, shuffle
 - ✅ **Event Listeners** - Handle card clicks
 - ✅ **Loops** - Create cards, iterate through arrays
@@ -164,9 +192,10 @@ memory-card-game/
 - ✅ **setTimeout** - Delay card flip-back on mismatch
 
 ## Testing Checklist
-- [ ] Cards shuffle randomly on each game start
-- [ ] Cards flip when clicked
-- [ ] Only 2 cards can be flipped at once
+
+- [x] Cards shuffle randomly on each game start ✅
+- [x] Cards flip when clicked ✅
+- [x] Only 2 cards can be flipped at once ✅
 - [ ] Matching cards stay flipped
 - [ ] Non-matching cards flip back
 - [ ] Move counter increments correctly
@@ -178,5 +207,5 @@ memory-card-game/
 ---
 
 ## Next Steps
-Ready to start implementation? We can begin with Phase 1 (HTML structure) and work through each phase systematically.
 
+Ready to start implementation? We can begin with Phase 1 (HTML structure) and work through each phase systematically.

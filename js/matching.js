@@ -3,9 +3,19 @@
  * Handles card matching, game state, and win detection
  */
 
-import { delay, announceToScreenReader } from './utils.js';
-import { unflipCard, markCardAsMatched, disableCard, enableCard } from './cards.js';
-import { playMatchSound, playMismatchSound, playFlipSound, isAudioEnabled } from './sounds.js';
+import { delay, announceToScreenReader } from "./utils.js";
+import {
+  unflipCard,
+  markCardAsMatched,
+  disableCard,
+  enableCard,
+} from "./cards.js";
+import {
+  playMatchSound,
+  playMismatchSound,
+  playFlipSound,
+  isAudioEnabled,
+} from "./sounds.js";
 
 let flippedCards = [];
 let matchedPairs = 0;
@@ -22,34 +32,34 @@ let allCards = null;
  * Initialize game state
  * Resets all game variables to their initial values
  * Called at the start of a new game or when resetting
- * 
+ *
  * State variables reset:
  * - flippedCards: Array of currently flipped cards (max 2)
  * - matchedPairs: Number of successfully matched pairs (0-8)
  * - moves: Number of moves/attempts made (starts at 0)
  * - isProcessing: Flag to prevent actions during card matching logic
- * 
+ *
  * @returns {void}
- * 
+ *
  * @example
  * initGameState(); // Reset everything for a new game
  */
 export function initGameState() {
   // Reset flipped cards array (no cards are flipped initially)
   flippedCards = [];
-  
+
   // Reset matched pairs counter (no pairs matched yet)
   matchedPairs = 0;
-  
+
   // Reset moves counter (no moves made yet)
   moves = 0;
-  
+
   // Reset processing flag (game is ready for input)
   isProcessing = false;
-  
+
   // Clear cached DOM references
   allCards = null;
-  
+
   // Update the moves display in the UI
   updateMovesDisplay();
 }
@@ -70,8 +80,8 @@ export async function handleCardClick(cardElement, onMatch, onWin) {
   // This protects against rapid clicking and edge cases
   if (
     isProcessing || // Prevents clicks during matching check
-    cardElement.classList.contains('matched') || // Prevents clicking matched cards
-    cardElement.classList.contains('flipped') || // Prevents clicking same card twice
+    cardElement.classList.contains("matched") || // Prevents clicking matched cards
+    cardElement.classList.contains("flipped") || // Prevents clicking same card twice
     flippedCards.includes(cardElement) // Additional check for flipped cards
   ) {
     return;
@@ -79,8 +89,8 @@ export async function handleCardClick(cardElement, onMatch, onWin) {
 
   // Add to flipped cards
   flippedCards.push(cardElement);
-  cardElement.classList.add('flipped');
-  
+  cardElement.classList.add("flipped");
+
   // Play flip sound if audio is enabled
   if (isAudioEnabled()) {
     playFlipSound();
@@ -94,7 +104,7 @@ export async function handleCardClick(cardElement, onMatch, onWin) {
 
     // Disable all cards during check (cache query result)
     if (!allCards) {
-      allCards = document.querySelectorAll('.card');
+      allCards = document.querySelectorAll(".card");
     }
     allCards.forEach((card) => {
       disableCard(card);
@@ -117,14 +127,16 @@ export async function handleCardClick(cardElement, onMatch, onWin) {
       markCardAsMatched(card2);
       matchedPairs++;
       onMatch && onMatch(card1, card2);
-      
+
       // Play match sound if audio is enabled
       if (isAudioEnabled()) {
         playMatchSound();
       }
-      
+
       // Announce match to screen readers
-      announceToScreenReader(`Match found! ${matchedPairs} of ${TOTAL_PAIRS} pairs matched.`);
+      announceToScreenReader(
+        `Match found! ${matchedPairs} of ${TOTAL_PAIRS} pairs matched.`
+      );
 
       // Check for win
       if (matchedPairs === TOTAL_PAIRS) {
@@ -132,23 +144,23 @@ export async function handleCardClick(cardElement, onMatch, onWin) {
       }
     } else {
       // No match - add shake animation
-      card1.classList.add('mismatch');
-      card2.classList.add('mismatch');
-      
+      card1.classList.add("mismatch");
+      card2.classList.add("mismatch");
+
       // Play mismatch sound if audio is enabled
       if (isAudioEnabled()) {
         playMismatchSound();
       }
-      
+
       // Flip back after delay
       await delay(1000);
       unflipCard(card1);
       unflipCard(card2);
-      
+
       // Remove mismatch class after animation
       setTimeout(() => {
-        card1.classList.remove('mismatch');
-        card2.classList.remove('mismatch');
+        card1.classList.remove("mismatch");
+        card2.classList.remove("mismatch");
       }, 500);
     }
 
@@ -159,12 +171,12 @@ export async function handleCardClick(cardElement, onMatch, onWin) {
     // Re-enable all non-matched cards (use cached reference if available)
     if (allCards) {
       allCards.forEach((card) => {
-        if (!card.classList.contains('matched')) {
+        if (!card.classList.contains("matched")) {
           enableCard(card);
         }
       });
     } else {
-      document.querySelectorAll('.card:not(.matched)').forEach((card) => {
+      document.querySelectorAll(".card:not(.matched)").forEach((card) => {
         enableCard(card);
       });
     }
@@ -177,7 +189,7 @@ export async function handleCardClick(cardElement, onMatch, onWin) {
 function updateMovesDisplay() {
   // Cache the element on first access
   if (!movesElement) {
-    movesElement = document.getElementById('moves');
+    movesElement = document.getElementById("moves");
   }
   if (movesElement) {
     movesElement.textContent = moves;
@@ -199,5 +211,3 @@ export function getMoves() {
 export function isGameComplete() {
   return matchedPairs === TOTAL_PAIRS;
 }
-
-
