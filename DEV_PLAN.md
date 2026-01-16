@@ -200,9 +200,9 @@ memory-card-game/
 - [x] Non-matching cards flip back ✅
 - [x] Move counter increments correctly ✅
 - [x] Game detects completion ✅
-- [ ] Reset button works
-- [ ] No bugs with rapid clicking
-- [ ] Responsive on mobile devices
+- [x] Reset button works ✅
+- [x] No bugs with rapid clicking ✅
+- [x] Responsive on mobile devices ✅
 
 ---
 
