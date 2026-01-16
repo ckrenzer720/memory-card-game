@@ -196,10 +196,10 @@ memory-card-game/
 - [x] Cards shuffle randomly on each game start ✅
 - [x] Cards flip when clicked ✅
 - [x] Only 2 cards can be flipped at once ✅
-- [ ] Matching cards stay flipped
-- [ ] Non-matching cards flip back
-- [ ] Move counter increments correctly
-- [ ] Game detects completion
+- [x] Matching cards stay flipped ✅
+- [x] Non-matching cards flip back ✅
+- [x] Move counter increments correctly ✅
+- [x] Game detects completion ✅
 - [ ] Reset button works
 - [ ] No bugs with rapid clicking
 - [ ] Responsive on mobile devices
